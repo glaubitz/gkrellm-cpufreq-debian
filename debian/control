@@ -1,0 +1,18 @@
+Source: gkrellm-cpufreq
+Section: x11
+Priority: extra
+Maintainer: Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+Build-Depends: debhelper (>= 7), libcpufreq-dev, gkrellm (>= 2.1.4), libgtk2.0-dev
+Standards-Version: 3.8.4
+Homepage: http://mathicse.epfl.ch/~winkelma/gkrellm2-cpufreq/
+
+Package: gkrellm-cpufreq
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: CPU frequency plugin for GKrellM
+ gkrellm-cpufreq is an additional plugin for GKrellM that allows to
+ view and set the CPU clock frequency. It also displays the current
+ governer which has been set for cpufreq such as ondemand, performance
+ and powersave. Plugin is very useful when using tiling window
+ managers such as ion3 together with GKrellM.
+
