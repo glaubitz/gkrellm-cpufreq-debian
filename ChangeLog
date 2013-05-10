@@ -1,3 +1,6 @@
+* 0.6.2     30.01.2012  Christoph Winkelmann
+- display only first governor and last slider when controls are coupled
+
 * 0.6.1     15.07.2007  Christoph Winkelmann
 - bugfix: segmentation fault on wakeup on SMP systems (patch from David Serrano)
 
