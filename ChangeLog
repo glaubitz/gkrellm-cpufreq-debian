@@ -1,3 +1,6 @@
+* 0.6.3     09.02.2012  Christoph Winkelmann
+- more fine grain control of what to display when controls are coupled
+
 * 0.6.2     30.01.2012  Christoph Winkelmann
 - display only first governor and last slider when controls are coupled
 

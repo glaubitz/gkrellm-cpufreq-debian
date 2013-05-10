@@ -36,6 +36,8 @@
  * 15/07/2007   0.6.1     bugfix: segmentation fault on wakeup on SMP systems
  * 30/01/2012   0.6.2     display only first governor and last slider
  *                        when controls are coupled
+ * 09/02/2012   0.6.3     more fine grain control of what to display when
+ *                        controls are coupled
  *
  *   gcc -Wall -fPIC -Wall `pkg-config --cflags gtk+-2.0` -c cpufreq.c
  *   gcc -shared -lcpufreq -Wl -o cpufreq.so cpufreq.o
@@ -48,7 +50,7 @@
 #include <cpufreq.h>
 
 /* version number */
-#define  VERSION        "0.6.2"
+#define  VERSION        "0.6.3"
 
 /* name in the configuration tree */
 #define  CONFIG_NAME	"CPUfreq"
@@ -86,7 +88,10 @@ static gint slider_enable = 1;
 static gint slider_enable_current;
 static gint slider_userspace_enable = 1;
 static gint controls_coupled = 0;
-static gint controls_coupled_current;
+static gint one_slider_coupled = 1;
+static gint one_slider_coupled_current;
+static gint one_freq_coupled = 0;
+static gint one_freq_coupled_current;
 static gint style_id;
 
 static void read_governors() {
@@ -150,7 +155,7 @@ static void update_plugin() {
 
   unsigned int cpu;
   if (slider_enable_current) {
-    if (controls_coupled_current) {
+    if (controls_coupled && one_slider_coupled_current) {
       if(!slider_in_motion[ncpu-1]) {
 	int krellpos = 0;
 	for( cpu=0; cpu<ncpu; ++cpu ) {
@@ -170,13 +175,27 @@ static void update_plugin() {
   }
   
   char theText[length];
-  for ( cpu=0; cpu<ncpu; ++cpu ) {
-    sprintf(theText, "%d MHz", (int)((khz[cpu]+500)/1000));
-    text_decal_freq[cpu]->x_off = 0;
-    gkrellm_draw_decal_text(panel, text_decal_freq[cpu], theText, -1);
-    text_decal_gov[cpu]->x_off = 0;
-    gkrellm_draw_decal_text(panel, text_decal_gov[cpu], governor_text[cpu], -1);
-  }  
+  if (controls_coupled && one_freq_coupled_current) {
+    int khz_sum = 0;
+    for ( cpu=0; cpu<ncpu; ++cpu ) {
+      khz_sum += khz[cpu];
+      text_decal_gov[cpu]->x_off = 0;
+      gkrellm_draw_decal_text(panel, text_decal_gov[cpu],
+			      governor_text[cpu], -1);
+    }
+    sprintf(theText, "%d MHz", (int)((khz_sum/ncpu+500)/1000));
+    text_decal_freq[0]->x_off = 0;
+    gkrellm_draw_decal_text(panel, text_decal_freq[0], theText, -1);
+  } else {
+    for ( cpu=0; cpu<ncpu; ++cpu ) {
+      sprintf(theText, "%d MHz", (int)((khz[cpu]+500)/1000));
+      text_decal_freq[cpu]->x_off = 0;
+      gkrellm_draw_decal_text(panel, text_decal_freq[cpu], theText, -1);
+      text_decal_gov[cpu]->x_off = 0;
+      gkrellm_draw_decal_text(panel, text_decal_gov[cpu],
+			      governor_text[cpu], -1);
+    }
+  }
 
   gkrellm_draw_panel_layers(panel);
 }
@@ -267,7 +286,8 @@ static gint cb_panel_press(GtkWidget* widget, GdkEventButton* ev,
     */
     slider_in_motion[cpu] = NULL;
     k = slider_krell[cpu];
-    if ( slider_enable_current && (!controls_coupled_current || cpu==ncpu-1) &&
+    if ( slider_enable_current &&
+	 (!(controls_coupled && one_slider_coupled_current) || cpu==ncpu-1) &&
          ev->x >  k->x0 &&
          ev->x <= k->x0 + k->w_scale &&
          ev->y >= k->y0 &&
@@ -351,11 +371,13 @@ static void create_plugin(GtkWidget* vbox, gint first_create) {
         -1,     /* x = -1 places at left margin */
          y,     /* y = -1 places at top margin */
         -1);    /* w = -1 makes decal the panel width minus margins */
-
-    y = text_decal_freq[cpu]->y + text_decal_freq[cpu]->h + 1;
+    if (!(controls_coupled && one_freq_coupled) || cpu==0) {
+      y = text_decal_freq[cpu]->y + text_decal_freq[cpu]->h + 1;
+    }
 
     /* the slider */
-    if (slider_enable && (!controls_coupled || cpu==ncpu-1) ) {
+    if (slider_enable &&
+	(!(controls_coupled && one_slider_coupled) || cpu==ncpu-1) ) {
       krell_image = gkrellm_krell_slider_piximage();
       gkrellm_set_style_slider_values_default(style,
 	y,     /* y offset */
@@ -376,7 +398,8 @@ static void create_plugin(GtkWidget* vbox, gint first_create) {
 
   slider_enable_current = slider_enable;
   gov_enable_current = gov_enable;
-  controls_coupled_current = controls_coupled;
+  one_slider_coupled_current = one_slider_coupled;
+  one_freq_coupled_current = one_freq_coupled;
 
   /* configure and create the panel  */
   gkrellm_panel_configure(panel, "", style);
@@ -402,6 +425,8 @@ static GtkWidget* gov_enable_button;
 static GtkWidget* slider_enable_button;
 static GtkWidget* slider_userspace_enable_button;
 static GtkWidget* controls_coupled_button;
+static GtkWidget* one_slider_coupled_button;
+static GtkWidget* one_freq_coupled_button;
 
 static void save_plugin_config(FILE *f) {
   fprintf(f, "%s khz_max %d\n", PLUGIN_CONFIG_KEYWORD,
@@ -414,6 +439,10 @@ static void save_plugin_config(FILE *f) {
           slider_enable);
   fprintf(f, "%s controls_coupled %d\n", PLUGIN_CONFIG_KEYWORD,
           controls_coupled);
+  fprintf(f, "%s one_slider_coupled %d\n", PLUGIN_CONFIG_KEYWORD,
+          one_slider_coupled);
+  fprintf(f, "%s one_freq_coupled %d\n", PLUGIN_CONFIG_KEYWORD,
+          one_freq_coupled);
 }
 
 static void load_plugin_config(gchar *arg) {
@@ -442,7 +471,12 @@ static void load_plugin_config(gchar *arg) {
       }
     } else if (strcmp(config, "controls_coupled") == 0) {
       sscanf(item, "%d", &controls_coupled);
-      controls_coupled_current = controls_coupled;
+    } else if (strcmp(config, "one_slider_coupled") == 0) {
+      sscanf(item, "%d", &one_slider_coupled);
+      one_slider_coupled_current = one_slider_coupled;
+    } else if (strcmp(config, "one_freq_coupled") == 0) {
+      sscanf(item, "%d", &one_freq_coupled);
+      one_freq_coupled_current = one_freq_coupled;
     }
   }
 }
@@ -456,6 +490,10 @@ static void apply_plugin_config(void) {
     GTK_TOGGLE_BUTTON(slider_userspace_enable_button)->active;
   controls_coupled =
     GTK_TOGGLE_BUTTON(controls_coupled_button)->active;
+  one_slider_coupled =
+    GTK_TOGGLE_BUTTON(one_slider_coupled_button)->active;
+  one_freq_coupled =
+    GTK_TOGGLE_BUTTON(one_freq_coupled_button)->active;
 }
 
 static gchar  *plugin_info_text[] = {
@@ -464,11 +502,8 @@ static gchar  *plugin_info_text[] = {
   "<ul> http://chw.tks6.net/gkrellm2-cpufreq/\n",
   "by Christoph Winkelmann, ",
   "<ul> chw@tks6.net\n\n",
-  "Enabling and disabling governor or slider display only takes effect\n",
-  "after change of theme, change of width, or restart.\n\n",
-  "Coupling controls will disable the display of all but one governors\n",
-  "and sliders, which only takes effect after change of theme, change of\n",
-  "width, or restart.\n\n",
+  "Enabling and disabling display of governor, frequency or slider only\n",
+  "takes effect after change of theme, change of width, or restart.\n\n",
   "The maximal frequency found during this run is saved for the next run\n",
   "when this page is viewed.\n\n",
   "Any suggestions are welcome!",
@@ -515,7 +550,13 @@ static void create_plugin_tab(GtkWidget *tab_vbox) {
   vbox1 = gkrellm_gtk_framed_vbox(vbox, "SMP", 4, FALSE, 0, 2);
   gkrellm_gtk_check_button(vbox1, &controls_coupled_button,
                            controls_coupled, FALSE, 0,
-                           "Couple controls of multiple CPUs (see Info tab)");
+                           "Couple controls of multiple CPUs");
+  gkrellm_gtk_check_button(vbox1, &one_slider_coupled_button,
+                           one_slider_coupled, FALSE, 0,
+                           "Display only one slider when controls are coupled (see Info tab)");
+  gkrellm_gtk_check_button(vbox1, &one_freq_coupled_button,
+                           one_freq_coupled, FALSE, 0,
+                           "Display only average frequency when controls are coupled (see Info tab)");
 
   /* -- Info tab -- */
   vbox = gkrellm_gtk_framed_notebook_page(tabs, "Info");
