@@ -34,6 +34,8 @@
  *                        drop temperature support
  *                        SMP support
  * 15/07/2007   0.6.1     bugfix: segmentation fault on wakeup on SMP systems
+ * 30/01/2012   0.6.2     display only first governor and last slider
+ *                        when controls are coupled
  *
  *   gcc -Wall -fPIC -Wall `pkg-config --cflags gtk+-2.0` -c cpufreq.c
  *   gcc -shared -lcpufreq -Wl -o cpufreq.so cpufreq.o
@@ -46,7 +48,7 @@
 #include <cpufreq.h>
 
 /* version number */
-#define  VERSION        "0.6.1"
+#define  VERSION        "0.6.2"
 
 /* name in the configuration tree */
 #define  CONFIG_NAME	"CPUfreq"
@@ -84,6 +86,7 @@ static gint slider_enable = 1;
 static gint slider_enable_current;
 static gint slider_userspace_enable = 1;
 static gint controls_coupled = 0;
+static gint controls_coupled_current;
 static gint style_id;
 
 static void read_governors() {
@@ -94,7 +97,7 @@ static void read_governors() {
       strcpy(governor[cpu], policy->governor);
       cpufreq_put_policy(policy);
     } else {
-      strcpy(governor[cpu], empty);
+      strcpy(governor[cpu], "unknown");
     }
   }
 }
@@ -147,10 +150,21 @@ static void update_plugin() {
 
   unsigned int cpu;
   if (slider_enable_current) {
-    for( cpu=0; cpu<ncpu; ++cpu ) {
-      if (!slider_in_motion[cpu]) {
-        int krellpos = slider_krell[cpu]->w_scale*khz[cpu]/khz_max;
-        gkrellm_update_krell(panel, slider_krell[cpu], krellpos);
+    if (controls_coupled_current) {
+      if(!slider_in_motion[ncpu-1]) {
+	int krellpos = 0;
+	for( cpu=0; cpu<ncpu; ++cpu ) {
+	  krellpos += khz[cpu]*slider_krell[ncpu-1]->w_scale;
+	}
+	krellpos /= khz_max*ncpu;
+	gkrellm_update_krell(panel, slider_krell[ncpu-1], krellpos);
+      }
+    } else {
+      for( cpu=0; cpu<ncpu; ++cpu ) {
+	if (!slider_in_motion[cpu]) {
+	  int krellpos = slider_krell[cpu]->w_scale*khz[cpu]/khz_max;
+	  gkrellm_update_krell(panel, slider_krell[cpu], krellpos);
+	}
       }
     }
   }
@@ -253,7 +267,7 @@ static gint cb_panel_press(GtkWidget* widget, GdkEventButton* ev,
     */
     slider_in_motion[cpu] = NULL;
     k = slider_krell[cpu];
-    if ( slider_enable_current &&
+    if ( slider_enable_current && (!controls_coupled_current || cpu==ncpu-1) &&
          ev->x >  k->x0 &&
          ev->x <= k->x0 + k->w_scale &&
          ev->y >= k->y0 &&
@@ -324,7 +338,7 @@ static void create_plugin(GtkWidget* vbox, gint first_create) {
         -1,     /* x = -1 places at left margin */
          y,     /* y = -1 places at top margin */
         -1);    /* w = -1 makes decal the panel width minus margins */
-    if (gov_enable) {
+    if (gov_enable && (!controls_coupled || cpu==0) ) {
       governor_text[cpu] = governor[cpu];
       y = text_decal_gov[cpu]->y + text_decal_gov[cpu]->h + 1;
     } else {
@@ -341,7 +355,7 @@ static void create_plugin(GtkWidget* vbox, gint first_create) {
     y = text_decal_freq[cpu]->y + text_decal_freq[cpu]->h + 1;
 
     /* the slider */
-    if (slider_enable) {
+    if (slider_enable && (!controls_coupled || cpu==ncpu-1) ) {
       krell_image = gkrellm_krell_slider_piximage();
       gkrellm_set_style_slider_values_default(style,
 	y,     /* y offset */
@@ -362,6 +376,7 @@ static void create_plugin(GtkWidget* vbox, gint first_create) {
 
   slider_enable_current = slider_enable;
   gov_enable_current = gov_enable;
+  controls_coupled_current = controls_coupled;
 
   /* configure and create the panel  */
   gkrellm_panel_configure(panel, "", style);
@@ -427,6 +442,7 @@ static void load_plugin_config(gchar *arg) {
       }
     } else if (strcmp(config, "controls_coupled") == 0) {
       sscanf(item, "%d", &controls_coupled);
+      controls_coupled_current = controls_coupled;
     }
   }
 }
@@ -450,6 +466,9 @@ static gchar  *plugin_info_text[] = {
   "<ul> chw@tks6.net\n\n",
   "Enabling and disabling governor or slider display only takes effect\n",
   "after change of theme, change of width, or restart.\n\n",
+  "Coupling controls will disable the display of all but one governors\n",
+  "and sliders, which only takes effect after change of theme, change of\n",
+  "width, or restart.\n\n",
   "The maximal frequency found during this run is saved for the next run\n",
   "when this page is viewed.\n\n",
   "Any suggestions are welcome!",
@@ -496,7 +515,7 @@ static void create_plugin_tab(GtkWidget *tab_vbox) {
   vbox1 = gkrellm_gtk_framed_vbox(vbox, "SMP", 4, FALSE, 0, 2);
   gkrellm_gtk_check_button(vbox1, &controls_coupled_button,
                            controls_coupled, FALSE, 0,
-                           "Couple controls of multiple CPUs");
+                           "Couple controls of multiple CPUs (see Info tab)");
 
   /* -- Info tab -- */
   vbox = gkrellm_gtk_framed_notebook_page(tabs, "Info");
