@@ -38,6 +38,7 @@
  *                        when controls are coupled
  * 09/02/2012   0.6.3     more fine grain control of what to display when
  *                        controls are coupled
+ * 10/02/2012   0.6.4     fix segmentation fault
  *
  *   gcc -Wall -fPIC -Wall `pkg-config --cflags gtk+-2.0` -c cpufreq.c
  *   gcc -shared -lcpufreq -Wl -o cpufreq.so cpufreq.o
@@ -50,7 +51,7 @@
 #include <cpufreq.h>
 
 /* version number */
-#define  VERSION        "0.6.3"
+#define  VERSION        "0.6.4"
 
 /* name in the configuration tree */
 #define  CONFIG_NAME	"CPUfreq"
@@ -88,6 +89,7 @@ static gint slider_enable = 1;
 static gint slider_enable_current;
 static gint slider_userspace_enable = 1;
 static gint controls_coupled = 0;
+static gint controls_coupled_current;
 static gint one_slider_coupled = 1;
 static gint one_slider_coupled_current;
 static gint one_freq_coupled = 0;
@@ -155,7 +157,7 @@ static void update_plugin() {
 
   unsigned int cpu;
   if (slider_enable_current) {
-    if (controls_coupled && one_slider_coupled_current) {
+    if (controls_coupled_current && one_slider_coupled_current) {
       if(!slider_in_motion[ncpu-1]) {
 	int krellpos = 0;
 	for( cpu=0; cpu<ncpu; ++cpu ) {
@@ -175,7 +177,7 @@ static void update_plugin() {
   }
   
   char theText[length];
-  if (controls_coupled && one_freq_coupled_current) {
+  if (controls_coupled_current && one_freq_coupled_current) {
     int khz_sum = 0;
     for ( cpu=0; cpu<ncpu; ++cpu ) {
       khz_sum += khz[cpu];
@@ -287,7 +289,8 @@ static gint cb_panel_press(GtkWidget* widget, GdkEventButton* ev,
     slider_in_motion[cpu] = NULL;
     k = slider_krell[cpu];
     if ( slider_enable_current &&
-	 (!(controls_coupled && one_slider_coupled_current) || cpu==ncpu-1) &&
+	 ( !(controls_coupled_current && one_slider_coupled_current) ||
+	   cpu==ncpu-1 ) &&
          ev->x >  k->x0 &&
          ev->x <= k->x0 + k->w_scale &&
          ev->y >= k->y0 &&
@@ -398,6 +401,7 @@ static void create_plugin(GtkWidget* vbox, gint first_create) {
 
   slider_enable_current = slider_enable;
   gov_enable_current = gov_enable;
+  controls_coupled_current = controls_coupled;
   one_slider_coupled_current = one_slider_coupled;
   one_freq_coupled_current = one_freq_coupled;
 
@@ -471,6 +475,7 @@ static void load_plugin_config(gchar *arg) {
       }
     } else if (strcmp(config, "controls_coupled") == 0) {
       sscanf(item, "%d", &controls_coupled);
+      controls_coupled_current = controls_coupled;
     } else if (strcmp(config, "one_slider_coupled") == 0) {
       sscanf(item, "%d", &one_slider_coupled);
       one_slider_coupled_current = one_slider_coupled;
@@ -499,7 +504,7 @@ static void apply_plugin_config(void) {
 static gchar  *plugin_info_text[] = {
   "<h>CPU frequency plugin\n",
   "gkrellm2-cpufreq ",VERSION,", ",
-  "<ul> http://chw.tks6.net/gkrellm2-cpufreq/\n",
+  "<ul> http://chw.tks6.net/rub/7\n",
   "by Christoph Winkelmann, ",
   "<ul> chw@tks6.net\n\n",
   "Enabling and disabling display of governor, frequency or slider only\n",

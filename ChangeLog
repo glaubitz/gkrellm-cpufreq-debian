@@ -1,3 +1,7 @@
+* 0.6.4     10.02.2012  Christoph Winkelmann
+- fix segmentation fault
+- update url in info tab
+
 * 0.6.3     09.02.2012  Christoph Winkelmann
 - more fine grain control of what to display when controls are coupled
 
