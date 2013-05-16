@@ -1,4 +1,4 @@
-Source: gkrellm-cpufreq
+Source: gkrellm2-cpufreq
 Section: x11
 Priority: extra
 Maintainer: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>

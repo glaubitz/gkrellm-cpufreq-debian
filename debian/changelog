@@ -1,22 +1,22 @@
-gkrellm-cpufreq (0.6.4-1) unstable; urgency=low
+gkrellm2-cpufreq (0.6.4-1) unstable; urgency=low
 
   * New upstream release.
 
  -- John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>  Fri, 10 May 2013 02:54:35 +0200
 
-gkrellm-cpufreq (0.6.3-1) unstable; urgency=low
+gkrellm2-cpufreq (0.6.3-1) unstable; urgency=low
 
   * New upstream release.
 
  -- John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>  Fri, 10 May 2013 02:54:02 +0200
 
-gkrellm-cpufreq (0.6.2-1) unstable; urgency=low
+gkrellm2-cpufreq (0.6.2-1) unstable; urgency=low
 
   * New upstream release.
 
  -- John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>  Fri, 10 May 2013 02:52:32 +0200
 
-gkrellm-cpufreq (0.6.1-1) unstable; urgency=low
+gkrellm2-cpufreq (0.6.1-1) unstable; urgency=low
 
   * Initial release (Closes: #572289)
 
