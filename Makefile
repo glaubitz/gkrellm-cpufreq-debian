@@ -6,14 +6,14 @@ GTK_LIB = `pkg-config gtk+-2.0 --libs`
 FLAGS = -O2 -Wall -fPIC $(GTK_INCLUDE)
 LIBS = $(GTK_LIB)
 
-LFLAGS = -shared -lcpufreq
+LDFLAGS += -shared -lcpufreq
 
 CC = gcc $(CFLAGS) $(FLAGS)
 
 OBJS = cpufreq.o
 
 cpufreq.so: $(OBJS)
-	$(CC) $(OBJS) -o cpufreq.so $(LFLAGS) $(LIBS)
+	$(CC) $(OBJS) -o cpufreq.so $(LDFLAGS) $(LIBS)
 
 install: cpufreq.so
 	install -D -m 755 -s cpufreq.so $(DESTDIR)/usr/lib/gkrellm2/plugins/cpufreq.so
