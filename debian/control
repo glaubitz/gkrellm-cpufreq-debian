@@ -3,7 +3,7 @@ Section: x11
 Priority: extra
 Maintainer: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
 Build-Depends: debhelper (>= 9), libcpufreq-dev, gkrellm (>= 2.1.4), libgtk2.0-dev
-Standards-Version: 3.8.4
+Standards-Version: 3.9.4
 Homepage: http://chw.populus.org/rub/7
 Vcs-Git: git://github.com/glaubitz/gkrellm-cpufreq-debian.git
 Vcs-Browser: https://github.com/glaubitz/gkrellm-cpufreq-debian
