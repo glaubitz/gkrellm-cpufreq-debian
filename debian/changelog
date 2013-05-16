@@ -1,3 +1,21 @@
+gkrellm2-cpufreq (0.6.4-2) unstable; urgency=low
+
+  * [1932aa51] Bump debhelper version to 9.
+  * [ffa6c9d2] Use my full name in debian/control for maintainership.
+  * [22ef47bf] Update homepage field in debian/control.
+  * [9c7ade76] Add Vcs-* fields in debian/control.
+  * [7cee3427] Update and fix description in debian/control.
+  * [4dd234fe] Remove boilerplate in debian/rules.
+  * [c56244bf] Remove boilerplate in debian/watch and update the watch URL.
+  * [4d58482d] Add missing debian/source/format for source format 3.0.
+  * [df4f3f4c] Verify and bump standards to 3.9.4 in debian/control.
+  * [50625f96] Include patch to modify Makefile to make sure linker flags
+	       are properly passed for hardening.
+  * [3beef549] Use proper upstream name for source package in
+	       debian/control and debian/changelog.
+
+ -- John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>  Thu, 16 May 2013 18:49:38 +0200
+
 gkrellm2-cpufreq (0.6.4-1) unstable; urgency=low
 
   * New upstream release.
