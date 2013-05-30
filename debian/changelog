@@ -1,3 +1,10 @@
+gkrellm2-cpufreq (0.6.4-3) unstable; urgency=low
+
+  * [871f38ed] Add missing dependency for gkrellm
+	       (>= 2.0.0) in debian/control.
+
+ -- John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>  Thu, 30 May 2013 18:49:58 +0200
+
 gkrellm2-cpufreq (0.6.4-2) unstable; urgency=low
 
   * [1932aa51] Bump debhelper version to 9.
