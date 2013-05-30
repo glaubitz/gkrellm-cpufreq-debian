@@ -10,7 +10,7 @@ Vcs-Browser: https://github.com/glaubitz/gkrellm-cpufreq-debian
 
 Package: gkrellm-cpufreq
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}
+Depends: ${shlibs:Depends}, ${misc:Depends}, gkrellm (>= 2.0.0)
 Description: CPU frequency plugin for GKrellM
  gkrellm-cpufreq is an additional plugin for GKrellM that allows one
  to view and set the CPU clock frequency. It also displays the currently
