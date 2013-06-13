@@ -1,3 +1,14 @@
+gkrellm2-cpufreq (0.6.4-4) unstable; urgency=low
+
+  [ Bart Martens ]
+  * [b9de897e] Update debian/watch file.
+
+  [ John Paul Adrian Glaubitz ]
+  * [2309b013] Add lintian override for binary-without-manpage
+               warning for usr/sbin/cpufreqnextgovernor.
+
+ -- John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>  Fri, 14 Jun 2013 00:28:51 +0200
+
 gkrellm2-cpufreq (0.6.4-3) unstable; urgency=low
 
   * [871f38ed] Add missing dependency for gkrellm
