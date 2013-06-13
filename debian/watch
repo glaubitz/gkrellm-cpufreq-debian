@@ -1,2 +1,4 @@
 version=3
-http://christoph.winkelmann.googlepages.com/gkrellm2-cpufreq-(.*)\.tar\.gz
+http://chw.populus.org/rub/7 \
+(?:.*/|.*=|)gkrellm2-cpufreq[\-\._](\d\S*)\.(?:tar\.xz|txz|tar\.bz2|tbz2|tar\.gz|tgz)(?:/\S*)?
+# Bart Martens <bartm@debian.org>  Fri, 31 May 2013 03:49:35 +0000
