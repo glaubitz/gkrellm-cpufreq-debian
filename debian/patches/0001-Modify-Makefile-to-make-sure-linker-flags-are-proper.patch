@@ -1,10 +1,10 @@
 From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
 Date: Thu, 16 May 2013 16:57:33 +0200
-Subject: =?UTF-8?q?Modify=20Makefile=20to=20make=20sure=20linker=20flags=20a?=
- =?UTF-8?q?re=20properly=0Apassed=20for=20hardening.?=
+Subject: Modify Makefile to make sure linker flags are properly passed for
+ hardening.
 
 ---
- Makefile |    4 ++--
+ Makefile | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/Makefile b/Makefile
