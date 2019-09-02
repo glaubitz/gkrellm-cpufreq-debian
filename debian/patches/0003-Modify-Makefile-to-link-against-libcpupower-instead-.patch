@@ -1,0 +1,21 @@
+From: Frederic Bonnard <frediz@debian.org>
+Date: Mon, 2 Sep 2019 21:31:24 +0200
+Subject: Modify Makefile to link against libcpupower instead of libcpufreq.
+
+---
+ Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Makefile b/Makefile
+index 7741a40..8765d37 100644
+--- a/Makefile
++++ b/Makefile
+@@ -7,7 +7,7 @@ GTK_LIB = `$(PKG_CONFIG) gtk+-2.0 --libs`
+ CFLAGS += -O2 -Wall -fPIC $(GTK_INCLUDE)
+ LIBS = $(GTK_LIB)
+ 
+-LDFLAGS += -shared -lcpufreq
++LDFLAGS += -shared -lcpupower
+ 
+ CC = gcc
+ 
