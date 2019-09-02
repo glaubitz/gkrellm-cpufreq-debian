@@ -1,3 +1,17 @@
+gkrellm2-cpufreq (0.6.4-5) unstable; urgency=medium
+
+  * Fix text formatting of debian/patches/0001-Modify-Makefile-
+    to-make-sure-linker-flags-are-proper.patch.
+  * Add patch to modify Makefile to enable cross-builds. (Closes: #895297)
+  * Add patch to modify Makefile to link against libcpupower. (Closes: #936063)
+  * Replace libcpufreq-dev dependency with libcpupower-dev in debian/control.
+  * Remove unneccessary commit hashes from debian/changelog.
+  * Use my full name in debian/changelog.
+  * Bump debhelper version to 12.
+  * Verify and bump standards to 4.4.0 in debian/control.
+
+ -- John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>  Mon, 02 Sep 2019 21:43:55 +0200
+
 gkrellm2-cpufreq (0.6.4-4) unstable; urgency=low
 
   [ Bart Martens ]
