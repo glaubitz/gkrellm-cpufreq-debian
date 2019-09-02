@@ -55,4 +55,4 @@ gkrellm2-cpufreq (0.6.1-1) unstable; urgency=low
 
   * Initial release (Closes: #572289)
 
- -- Adrian Glaubitz <glaubitz@physik.fu-berlin.de>  Wed, 03 Mar 2010 01:40:07 +0100
+ -- John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>  Wed, 03 Mar 2010 01:40:07 +0100
