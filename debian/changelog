@@ -1,3 +1,10 @@
+gkrellm2-cpufreq (0.6.4-6) unstable; urgency=medium
+
+  * Remove stray characters in Section field in debian/control. (Closes: #939308)
+  * Change Priority from extra to optional in debian/control.
+
+ -- John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>  Wed, 04 Sep 2019 11:56:46 +0200
+
 gkrellm2-cpufreq (0.6.4-5) unstable; urgency=medium
 
   * Fix text formatting of debian/patches/0001-Modify-Makefile-
