@@ -2,6 +2,7 @@ gkrellm2-cpufreq (0.6.4-7) UNRELEASED; urgency=medium
 
   * Use secure copyright file specification URI.
   * Wrap long lines in changelog entries: 0.6.4-6.
+  * Set debhelper-compat version in Build-Depends.
 
  -- Debian Janitor <janitor@jelmer.uk>  Tue, 28 Apr 2020 17:45:51 +0000
 
