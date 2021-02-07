@@ -1,3 +1,11 @@
+gkrellm2-cpufreq (0.6.4-6.1) unstable; urgency=medium
+
+  * Non-maintainer upload.
+  * Add patch from Bernhard Übelacker fixing an undefined symbol.
+    (Closes: #966638)
+
+ -- Adrian Bunk <bunk@debian.org>  Sun, 07 Feb 2021 13:38:30 +0200
+
 gkrellm2-cpufreq (0.6.4-6) unstable; urgency=medium
 
   * Remove stray characters in Section field in debian/control. (Closes: #939308)
