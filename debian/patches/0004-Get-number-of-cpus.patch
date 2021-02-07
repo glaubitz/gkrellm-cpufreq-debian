@@ -1,0 +1,41 @@
+Description: Get number of CPUs
+
+Author: Bernhard Übelacker <bernhardu@mailbox.org>
+Bug-Debian: https://bugs.debian.org/966638
+Forwarded: no
+Last-Update: 2020-10-16
+
+Index: gkrellm2-cpufreq-0.6.4/cpufreq.c
+===================================================================
+--- gkrellm2-cpufreq-0.6.4.orig/cpufreq.c
++++ gkrellm2-cpufreq-0.6.4/cpufreq.c
+@@ -49,6 +49,7 @@
+ 
+ #include <gkrellm2/gkrellm.h>
+ #include <cpufreq.h>
++#include <sys/sysinfo.h>
+ 
+ /* version number */
+ #define  VERSION        "0.6.4"
+@@ -616,8 +617,7 @@ GkrellmMonitor* gkrellm_init_plugin(void
+   monitor = &plugin_mon;
+ 
+   /* determine number of cpus */
+-  for( ncpu = 0; cpufreq_cpu_exists(ncpu)==0; ++ncpu )
+-    ;
++  ncpu = get_nprocs();
+   ncpu = ncpu > NCPU_MAX ? NCPU_MAX : ncpu;
+ 
+   /* determine maximal frequency */
+@@ -625,7 +625,10 @@ GkrellmMonitor* gkrellm_init_plugin(void
+   for ( cpu = 0; cpu<ncpu; ++cpu) {
+     unsigned long khz_min = 0;
+     unsigned long khz_max_i = 0;
+-    cpufreq_get_hardware_limits( cpu, &khz_min, &khz_max_i );
++    int ret;
++    ret = cpufreq_get_hardware_limits( cpu, &khz_min, &khz_max_i );
++    if (ret < 0)
++        khz_min = khz_max_i = 1;
+     khz_max = khz_max < khz_max_i ? khz_max_i : khz_max;
+   }
+ 
