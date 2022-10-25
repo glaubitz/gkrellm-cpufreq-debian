@@ -1,1 +1,1 @@
-binary-without-manpage usr/sbin/cpufreqnextgovernor
+no-manual-page usr/sbin/cpufreqnextgovernor
