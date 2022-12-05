@@ -2,10 +2,10 @@ Source: gkrellm2-cpufreq
 Section: x11
 Priority: optional
 Maintainer: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-Build-Depends: debhelper (>= 12), libcpupower-dev, gkrellm (>= 2.1.4), libgtk2.0-dev
-Standards-Version: 4.4.0
+Build-Depends: debhelper-compat (= 13), libcpupower-dev, gkrellm (>= 2.1.4), libgtk2.0-dev
+Standards-Version: 4.6.1
 Homepage: http://chw.populus.org/rub/7
-Vcs-Git: git://github.com/glaubitz/gkrellm-cpufreq-debian.git
+Vcs-Git: https://github.com/glaubitz/gkrellm-cpufreq-debian.git
 Vcs-Browser: https://github.com/glaubitz/gkrellm-cpufreq-debian
 
 Package: gkrellm-cpufreq
