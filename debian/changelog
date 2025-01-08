@@ -1,3 +1,9 @@
+gkrellm2-cpufreq (0.6.4-7) unstable; urgency=medium
+
+  * Set Rules-Requires-Root to binary-targets in debian/control. (Closes: #1089338)
+
+ -- John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>  Wed, 08 Jan 2025 21:23:49 +0100
+
 gkrellm2-cpufreq (0.6.4-6.1) unstable; urgency=medium
 
   * Non-maintainer upload.
